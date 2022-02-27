@@ -387,8 +387,9 @@ class Customer(Location):
 
 
 class Depot(Location):
-    """A boolean to determine if this depot is considered as a departure location. By default, any depot is a
-    departure location."""
+    
+    
+    """A boolean to determine if this depot is considered as a departure location. By default, any depot is a departure location."""
     is_center = BooleanProperty(index=True, default=True)
 
     def __init__(self, *args, **kwargs):
