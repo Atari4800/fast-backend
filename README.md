@@ -6,8 +6,8 @@ As noted by Team-Fast's README file, this project seeks to implement a route gen
 
 We have adjusted the backend enviroment to start on this project: 
 - Updating Chromedriver to version 98
-- Set up our own Postgresql ad neo4j databases
-- Added missing dependancies, django-cors-headers~=3.11.0, into requirements.txt
+- Set up our own Postgresql and neo4j databases
+- Added missing dependencies, django-cors-headers~=3.11.0, into requirements.txt
 - Set IPs to local testing enviroment
 - Created and added our own Bing API Key
 - Updated settings.py to match our changes
