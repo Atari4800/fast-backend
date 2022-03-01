@@ -15,6 +15,8 @@ We have adjusted the backend enviroment to start on this project:
 - Starting implementing caching savings between location for faster algorithm performance
 - Updated installation instructions
 
+We still do not have the caching for savings working.
+
 ## Installing
 1. Clone this git repo `git clone https://github.com/Atari4800/fast-backend.git`
 1. Set up virtual enviroment `python -m venv .venv
