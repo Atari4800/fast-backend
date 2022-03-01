@@ -193,10 +193,19 @@ class SavingsManager:
                             valid_locations.add(pair.first)
                             valid_locations.add(pair.last)
 
-                            saving_ser = SavingsSerializer(data={'origin': pair.origin, 'location1': pair.first, 'location2':pair.last, 'savings':savings })
-                            if saving_ser.is_valid():
-                                saving_ser.save()
-                            print(saving_ser.data)
+
+                            pair.first.is_location_1_of.connect(pair)
+                            pair.last.is_location_2_of.connect(pair)
+                            pair.origin.is_origin_of.connect(pair)
+                            
+
+                            # saving_ser = SavingsSerializer(data={'saving_id': 0, 'origin': pair.origin, 'location1': pair.first, 'location2': pair.last, 'saving': pair.distance_saving})
+                            # if saving_ser.is_valid():
+                            #     saving_ser.save()
+                            #     saving_ser.create()
+                            
+                            # print(saving_ser.data)
+
                         except GeocodeError:
                             if pair.first.address.longitude is None or pair.first.address.latitude is None:
                                 invalid_locations.add(pair.first)
