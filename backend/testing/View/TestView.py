@@ -17,7 +17,7 @@ class UntitledTestCase(unittest.TestCase):
     
     def test_untitled_test_case(self):
         driver = self.driver
-        driver.get("http://3.144.105.249:3000/")
+        driver.get("http://localhost:3000/")
         driver.find_element_by_link_text("View").click()
         # self.assertEqual("Huckleberry", driver.find_element_by_xpath("//div[@id='root']/div/div/div/div[2]/table/tbody/tr/td[2]").text)
         # self.assertEqual("Finn", driver.find_element_by_xpath("//div[@id='root']/div/div/div/div[2]/table/tbody/tr/td[3]").text)

@@ -17,7 +17,7 @@ class SearchRecipients(unittest.TestCase):
     
     def test_search_recipients(self):
         driver = self.driver
-        driver.get("http://3.144.105.249:3000/")
+        driver.get("http://localhost:3000/")
         driver.find_element_by_xpath("//div[@id='root']/div/div/div[2]/div/div/div/div[2]/div/input").click()
         driver.find_element_by_xpath("//div[@id='root']/div/div/div[2]/div/div/div/div[2]/div/input").clear()
         driver.find_element_by_xpath("//div[@id='root']/div/div/div[2]/div/div/div/div[2]/div/input").send_keys("ad")

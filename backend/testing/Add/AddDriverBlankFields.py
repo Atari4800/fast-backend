@@ -17,7 +17,7 @@ class UntitledTestCase(unittest.TestCase):
     
     def test_untitled_test_case(self):
         driver = self.driver
-        driver.get("http://3.144.105.249:3000/")
+        driver.get("http://localhost:3000/")
         driver.find_element_by_link_text("Add New").click()
         driver.find_element_by_xpath("//button[@type='submit']").click()
         driver.find_element_by_name("first_name").click()

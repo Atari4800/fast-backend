@@ -17,7 +17,7 @@ class UntitledTestCase(unittest.TestCase):
     
     def test_untitled_test_case(self):
         driver = self.driver
-        driver.get("http://3.144.105.249:3000/routing")
+        driver.get("http://localhost:3000/routing")
         driver.find_element_by_id("formGridDeliveryLimit").click()
         driver.find_element_by_id("formGridDeliveryLimit").clear()
         driver.find_element_by_id("formGridDeliveryLimit").send_keys("20")

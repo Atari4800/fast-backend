@@ -17,7 +17,7 @@ class CreateRouteNotEnoughDrivers(unittest.TestCase):
     
     def test_create_route_not_enough_drivers(self):
         driver = self.driver
-        driver.get("http://3.144.105.249:3000/routing")
+        driver.get("http://localhost:3000/routing")
         driver.find_element_by_id("search_input").click()
         driver.find_element_by_xpath("//div[@id='multiselectContainerReact']/div[2]/ul/li").click()
         driver.find_element_by_xpath("(.//*[normalize-space(text()) and normalize-space(.)='Recipients'])[1]/following::div[3]").click()

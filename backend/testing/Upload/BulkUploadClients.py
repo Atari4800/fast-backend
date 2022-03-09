@@ -17,7 +17,7 @@ class UntitledTestCase(unittest.TestCase):
     
     def test_untitled_test_case(self):
         driver = self.driver
-        driver.get("http://3.144.105.249:3000/")
+        driver.get("http://localhost:3000/")
         driver.find_element_by_xpath("//div[@id='root']/div/div/div[2]/div[4]/div[2]/div/div/button").click()
         driver.find_element_by_xpath("//div[@id='root']/div/div/div[2]/div[4]/div/div/div/input").click()
         driver.find_element_by_xpath("//div[@id='root']/div/div/div[2]/div[4]/div/div/div/input").clear()
