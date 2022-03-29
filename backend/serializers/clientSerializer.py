@@ -47,7 +47,7 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
         location.address = location_data.get('address', location.address)
-        location.room_number = location_data.get('room_number', location.address)
+        location.room_number = location_data.get('room_number', location.room_number)
         location.city = location_data.get('city', location.city)
         location.state = location_data.get('state', location.state)
         location.zipcode = location_data.get('zipcode', location.zipcode)
