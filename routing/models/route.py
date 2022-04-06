@@ -278,10 +278,41 @@ class Route(StructuredNode):
         @param location: Location to insert to the front of this route.
         @raise RouteStateException if the departure has not been set.
         """
+
+        print("\n\n")
+
+        print("FUNCTION USED: __insert_back\n\n")
+        print("self.__total_duration")
+        print(self.__total_duration)
+        print("self.__departure.duration(self.__departure.next)")
+        print(self.__departure.duration(location))
+        print("self.__departure.next.duration(location)")
+        print(self.__departure.next.duration(location))
+        print("self.__total_distance")
+        print(self.__total_distance)
+        print("self.__departure.distance(self.__departure.next")
+        print(self.__departure.distance(self.__departure.next))
+        print("self.__departure.distance(location)")
+        print(self.__departure.distance(location))
+        print("self.__departure.next.distance(location)")
+        print(self.__departure.next.distance(location))
+        print("self.__total_quantity")
+        print(self.__total_quantity)
+        print("location.demand")
+        print(location.demand)
+        print("location.next")
+        print(location.next)
+        print("departure.next")
+        print(self.__departure.next)
+
+        print("\n\n")
+
         if len(self.__locations_queue) == 0 or self.__departure is None:
             raise RouteStateException('This route has no departure. Set the departure before proceeding.')
         elif len(self.__locations_queue) == 1:
             raise RouteStateException('No insertion can\'t be made on the rear.')
+        elif self.__departure.distance(location) is None:
+            location.is_assigned = False
         else:
             self.__total_duration = (
                     self.__total_duration
