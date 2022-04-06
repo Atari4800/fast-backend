@@ -226,8 +226,35 @@ class Route(StructuredNode):
         @param location: Location to insert to the front of this route.
         @raise RouteStateException if the departure has not been set.
         """
+
+        # the following print statements are for debugging purposes
+        print("\n\n")
+        print("FUNCTION USED: __insert_front\n\n")
+        print("Self:")
+        print(self)
+        print("Self Type:")
+        print(type(self))
+        print("Location:")
+        print(location)
+        print("Location Type:")
+        print(type(location))
+        print("self.__locations_queue:")
+        print(self.__locations_queue)
+        print("self.__departure:")
+        print(self.__departure)
+        print("self.__total_duration:")
+        print(self.__total_duration)
+        print("self.__tail.duration:")
+        print(self.__tail.duration)
+        print("self.__tail.duration(other=location):")
+        print(self.__tail.duration(other=location))
+
+        print("\n\n")
+
         if len(self.__locations_queue) == 0 or self.__departure is None:
             raise RouteStateException('This route has no departure. Set the departure before proceeding.')
+        elif self.__tail.duration(other=location) is None:
+            location.is_assigned = False
         else:
             self.__total_duration += self.__tail.duration(other=location)
             self.__total_distance += self.__tail.distance(other=location)
