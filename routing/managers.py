@@ -150,22 +150,6 @@ class LocationManager:
         This helper function ensures that there is an edge between the two locations.
         """
 
-        # the following print statements are for debugging purposes
-        print("\n\n")
-        print("FUNCTION USED: __get_distance_saved")
-        print("self.__depot")
-        print(self.__depot)
-        print("location1:")
-        print(location1)
-        print("location2:")
-        print(location2)
-        print("self.__depot.distance(location1):")
-        print(self.__depot.distance(location1))
-        print("self.__depot.distance(location2):")
-        print(self.__depot.distance(location2))
-
-        print("\n\n")
-
         if self.__depot.distance(location1) is None or self.__depot.distance(location2) is None:
             return 0.0
         return self.__depot.distance(location1) + self.__depot.distance(location2) - location1.distance(location2)

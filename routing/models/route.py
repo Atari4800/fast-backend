@@ -227,30 +227,6 @@ class Route(StructuredNode):
         @raise RouteStateException if the departure has not been set.
         """
 
-        # the following print statements are for debugging purposes
-        print("\n\n")
-        print("FUNCTION USED: __insert_front\n\n")
-        print("Self:")
-        print(self)
-        print("Self Type:")
-        print(type(self))
-        print("Location:")
-        print(location)
-        print("Location Type:")
-        print(type(location))
-        print("self.__locations_queue:")
-        print(self.__locations_queue)
-        print("self.__departure:")
-        print(self.__departure)
-        print("self.__total_duration:")
-        print(self.__total_duration)
-        print("self.__tail.duration:")
-        print(self.__tail.duration)
-        print("self.__tail.duration(other=location):")
-        print(self.__tail.duration(other=location))
-
-        print("\n\n")
-
         if len(self.__locations_queue) == 0 or self.__departure is None:
             raise RouteStateException('This route has no departure. Set the departure before proceeding.')
         elif self.__tail.duration(other=location) is None:
@@ -278,34 +254,6 @@ class Route(StructuredNode):
         @param location: Location to insert to the front of this route.
         @raise RouteStateException if the departure has not been set.
         """
-
-        print("\n\n")
-
-        print("FUNCTION USED: __insert_back\n\n")
-        print("self.__total_duration")
-        print(self.__total_duration)
-        print("self.__departure.duration(self.__departure.next)")
-        print(self.__departure.duration(location))
-        print("self.__departure.next.duration(location)")
-        print(self.__departure.next.duration(location))
-        print("self.__total_distance")
-        print(self.__total_distance)
-        print("self.__departure.distance(self.__departure.next")
-        print(self.__departure.distance(self.__departure.next))
-        print("self.__departure.distance(location)")
-        print(self.__departure.distance(location))
-        print("self.__departure.next.distance(location)")
-        print(self.__departure.next.distance(location))
-        print("self.__total_quantity")
-        print(self.__total_quantity)
-        print("location.demand")
-        print(location.demand)
-        print("location.next")
-        print(location.next)
-        print("departure.next")
-        print(self.__departure.next)
-
-        print("\n\n")
 
         if len(self.__locations_queue) == 0 or self.__departure is None:
             raise RouteStateException('This route has no departure. Set the departure before proceeding.')
