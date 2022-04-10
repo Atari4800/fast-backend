@@ -74,9 +74,7 @@ class BingGeocodeService(GeocodeService):
                 and address_response.get('countryRegion') is not None
         )
         condition2 = (
-                address_response.get('locality').lower() == address.city.lower()
-                and int(address_response.get('postalCode')) == address.zipcode
-                and address_response.get('countryRegion').lower() == 'United States'.lower()
+                address_response.get('countryRegion').lower() == 'United States'.lower()
         )
 
         return condition1 and condition2
