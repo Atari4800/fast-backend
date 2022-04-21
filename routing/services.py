@@ -52,19 +52,23 @@ class BingGeocodeService(GeocodeService):
             resource_sets = response['resourceSets'][0] if len(response['resourceSets']) > 0 else None
             if resource_sets and 'resources' in resource_sets:
                 resources = resource_sets['resources'][0] if len(resource_sets['resources']) > 0 else None
-                if resources and resources.get('address'):
-                    address_response = resources.get('address')
-                    if BingGeocodeService.__validate_geocode(address_response, address):
-                        if resources and 'point' in resources.keys():
-                            point = resources['point'] if len(resources['point']) > 0 else None
-                            if point and 'coordinates' in point.keys():
-                                coordinates = point['coordinates']
-                                if coordinates[0] < -90 or coordinates[0] > 90:
-                                    raise GeocodeError('Latitude must be between -90 and 90')
-                                if coordinates[1] < -180 or coordinates[1] > 180:
-                                    raise GeocodeError('Longitude must be between -180 and 180')
-                                return coordinates[0], coordinates[1]
-                    raise GeocodeError('Invalid Geocode')
+                confidence = resources['confidence']
+                logging.info(f'Retrieving confidence for address {confidence}')
+                if confidence == 'High':
+                    if resources and resources.get('address'):
+                        address_response = resources.get('address')
+                        if BingGeocodeService.__validate_geocode(address_response, address):
+                            if resources and 'point' in resources.keys():
+                                point = resources['point'] if len(resources['point']) > 0 else None
+                                if point and 'coordinates' in point.keys():
+                                    coordinates = point['coordinates']
+                                    if coordinates[0] < -90 or coordinates[0] > 90:
+                                        raise GeocodeError('Latitude must be between -90 and 90')
+                                    if coordinates[1] < -180 or coordinates[1] > 180:
+                                        raise GeocodeError('Longitude must be between -180 and 180')
+                                    return coordinates[0], coordinates[1]
+                        raise GeocodeError('Invalid Geocode')
+                raise GeocodeError('Confidence Must Be High')
         raise GeocodeError('API Error')
 
     @staticmethod
