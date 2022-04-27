@@ -53,7 +53,7 @@ class BingGeocodeService(GeocodeService):
             if resource_sets and 'resources' in resource_sets:
                 resources = resource_sets['resources'][0] if len(resource_sets['resources']) > 0 else None
                 confidence = resources['confidence']
-                logging.info(f'Retrieving confidence for address {confidence}')
+                logging.info(f'Retrieving confidence for address: {confidence}')
                 if confidence == 'High':
                     if resources and resources.get('address'):
                         address_response = resources.get('address')
