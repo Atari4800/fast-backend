@@ -5,7 +5,6 @@ from rest_framework import status
 
 
 class BulkClientView(APIView):
-
     def post(self, request, format=None):
         serializer = ClientSerializer(data=request.data, many=True)
         if serializer.is_valid():

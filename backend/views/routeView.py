@@ -8,13 +8,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from backend.models import Route, Client, Driver
-from backend.serializers import ClientSerializer, DriverSerializer, RouteListSerializer, RouteSerializer
+from backend.serializers import (
+    ClientSerializer,
+    DriverSerializer,
+    RouteListSerializer,
+    RouteSerializer,
+)
 from routing.managers import RouteManager
 from django.conf import settings
 
 
 class RouteView(APIView):
-
     def get_object(self, pk):
         try:
             return Route.objects.get(pk=pk)
@@ -28,7 +32,6 @@ class RouteView(APIView):
 
 
 class RoutingView(APIView):
-
     def get(self, request, format=None):
         routes = Route.objects.all()
         serializer = RouteSerializer(routes, many=True)
@@ -36,11 +39,11 @@ class RoutingView(APIView):
 
     def post(self, request, format=None):
         data = request.data
-        client_id_list = data.get('client_ids')
-        driver_id_list = data.get('driver_ids')
-        delivery_limit = data.get('delivery_limit')
-        departure = data.get('departure')
-        duration_limit = data.get('duration_limit')
+        client_id_list = data.get("client_ids")
+        driver_id_list = data.get("driver_ids")
+        delivery_limit = data.get("delivery_limit")
+        departure = data.get("departure")
+        duration_limit = data.get("duration_limit")
 
         departure = json.dumps(departure)
 
@@ -58,7 +61,7 @@ class RoutingView(APIView):
         for driver_id in driver_id_list:
             driver = Driver.objects.get(id=driver_id)
             driver.duration = duration_limit
-            if driver.employee_status != 'Employee':
+            if driver.employee_status != "Employee":
                 driver.delivery_limit = delivery_limit
             else:
                 driver.deliver_limit = None
@@ -74,23 +77,23 @@ class RoutingView(APIView):
 
         routes_json = json.loads(routes_json)
 
-        for route in routes_json.get('routes'):
-            route['assigned_to'] = route['assigned_to']['id']
+        for route in routes_json.get("routes"):
+            route["assigned_to"] = route["assigned_to"]["id"]
             # route['itinerary'] = [item for item in route['itinerary'] if(item['is_center'] == False or item['is_center'] == 'false')]
 
         now = datetime.now()
         now = now.strftime("%m/%d/%Y")
 
         f = open("routesLog.txt", "a")
-        f.write('Route - ')
+        f.write("Route - ")
         f.write(now)
-        f.write('\n')
+        f.write("\n")
         f.write(json.dumps(routes_json))
-        f.write('\n\n')
+        f.write("\n\n")
         f.close()
 
         # TODO: ensure routes are correctly going through serializer
-        #print(type(routes_json))
+        # print(type(routes_json))
         serializer = RouteListSerializer(data=routes_json)
 
         if serializer.is_valid():

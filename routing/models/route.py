@@ -6,8 +6,15 @@ import sys
 from collections import deque
 from datetime import datetime
 
-from neomodel import StructuredNode, RelationshipTo, FloatProperty, DateTimeProperty, UniqueIdProperty, One, \
-    DoesNotExist
+from neomodel import (
+    StructuredNode,
+    RelationshipTo,
+    FloatProperty,
+    DateTimeProperty,
+    UniqueIdProperty,
+    One,
+    DoesNotExist,
+)
 
 if os.getcwd() not in sys.path:
     sys.path.insert(0, os.getcwd())
@@ -33,14 +40,16 @@ class Route(StructuredNode):
 
     """A relationship to the driver that is assigned to this route. This relationship ensures a 1-1 between driver 
     and route"""
-    assigned_to = RelationshipTo(cls_name='routing.models.driver.Driver', rel_type='ASSIGNED_TO', cardinality=One)
+    assigned_to = RelationshipTo(
+        cls_name="routing.models.driver.Driver", rel_type="ASSIGNED_TO", cardinality=One
+    )
 
     def __init__(self, *args, **kwargs):
         """Creates a new Route.
 
-            Typical usage example:
+        Typical usage example:
 
-            route = Route()
+        route = Route()
         """
         super(Route, self).__init__(*args, **kwargs)
         self.__locations_queue: deque = deque()
@@ -172,48 +181,57 @@ class Route(StructuredNode):
         if pair and self.__is_open:
             if len(self.__locations_queue) == 0:
                 if self.__departure is None:
-                    raise RouteStateException('This route has no departure. Set the departure before proceeding.')
+                    raise RouteStateException(
+                        "This route has no departure. Set the departure before proceeding."
+                    )
                 self.__locations_queue.append(self.__departure)
                 self.__tail = self.__departure
             if location and (not location.is_assigned):
                 if len(self.__locations_queue) == 1:
                     self.__insert_front(location=location)
                 elif pair.is_first(location) and not pair.first.is_assigned:
-                    logging.info(f'Location {location} is first and head is {self.__departure.next}')
+                    logging.info(
+                        f"Location {location} is first and head is {self.__departure.next}"
+                    )
                     if self.__is_exterior(pair.last):
-                        logging.info(f'Location {pair.last} is exterior')
+                        logging.info(f"Location {pair.last} is exterior")
                         if pair.last == self.__departure.next:
                             if self.__departure.next.next is None:
                                 self.__insert_front(location)
-                                logging.info(f'Inserting {location} to the front')
+                                logging.info(f"Inserting {location} to the front")
                             else:
                                 self.__insert_back(location=location)
-                                logging.info(f'Inserting {location} to the back')
+                                logging.info(f"Inserting {location} to the back")
                         elif pair.last == self.__tail:
                             self.__insert_front(location=location)
-                            logging.info(f'Inserting {location} to the front')
+                            logging.info(f"Inserting {location} to the front")
                 elif pair.is_last(location) and not pair.last.is_assigned:
-                    logging.info(f'Location {location} is last and tail is {self.__tail}')
+                    logging.info(
+                        f"Location {location} is last and tail is {self.__tail}"
+                    )
                     if self.__is_exterior(pair.first):
-                        logging.info(f'Location {pair.first} is exterior')
+                        logging.info(f"Location {pair.first} is exterior")
                         if pair.first == self.__departure.next:
                             if self.__departure.next.next is None:
                                 self.__insert_front(location)
-                                logging.info(f'Inserting {location} to the front')
+                                logging.info(f"Inserting {location} to the front")
                             else:
                                 self.__insert_back(location)
-                                logging.info(f'Inserting {location} to the back')
+                                logging.info(f"Inserting {location} to the back")
                         elif pair.first == self.__tail:
                             self.__insert_front(location)
-                            logging.info(f'Inserting {location} to the front')
-                logging.info('Processing location {} Capacity: {} '
-                             'Assigned: {} '
-                      .format(location, location.demand, location.is_assigned))
-                logging.info('Locations:  {}'.format(self))
+                            logging.info(f"Inserting {location} to the front")
+                logging.info(
+                    "Processing location {} Capacity: {} "
+                    "Assigned: {} ".format(
+                        location, location.demand, location.is_assigned
+                    )
+                )
+                logging.info("Locations:  {}".format(self))
                 return True
             else:
                 if location:
-                    logging.info(f'{location} is already assigned.')
+                    logging.info(f"{location} is already assigned.")
             if self.previous == self.__departure:
                 self.undo()
         return False if location is None else location.is_assigned
@@ -227,7 +245,9 @@ class Route(StructuredNode):
         @raise RouteStateException if the departure has not been set.
         """
         if len(self.__locations_queue) == 0 or self.__departure is None:
-            raise RouteStateException('This route has no departure. Set the departure before proceeding.')
+            raise RouteStateException(
+                "This route has no departure. Set the departure before proceeding."
+            )
         else:
             self.__total_duration += self.__tail.duration(other=location)
             self.__total_distance += self.__tail.distance(other=location)
@@ -252,21 +272,23 @@ class Route(StructuredNode):
         @raise RouteStateException if the departure has not been set.
         """
         if len(self.__locations_queue) == 0 or self.__departure is None:
-            raise RouteStateException('This route has no departure. Set the departure before proceeding.')
+            raise RouteStateException(
+                "This route has no departure. Set the departure before proceeding."
+            )
         elif len(self.__locations_queue) == 1:
-            raise RouteStateException('No insertion can\'t be made on the rear.')
+            raise RouteStateException("No insertion can't be made on the rear.")
         else:
             self.__total_duration = (
-                    self.__total_duration
-                    - self.__departure.duration(self.__departure.next)
-                    + self.__departure.duration(location)
-                    + self.__departure.next.duration(location)
+                self.__total_duration
+                - self.__departure.duration(self.__departure.next)
+                + self.__departure.duration(location)
+                + self.__departure.next.duration(location)
             )
             self.__total_distance = (
-                    self.__total_distance
-                    - self.__departure.distance(self.__departure.next)
-                    + self.__departure.distance(location)
-                    + self.__departure.next.distance(location)
+                self.__total_distance
+                - self.__departure.distance(self.__departure.next)
+                + self.__departure.distance(location)
+                + self.__departure.next.distance(location)
             )
             self.__total_quantity += location.demand
             location.next = self.__departure.next
@@ -278,7 +300,7 @@ class Route(StructuredNode):
 
     def __is_exterior(self, location: Location):
         if len(self.__locations_queue) == 0:
-            raise EmptyRouteException('This route is empty')
+            raise EmptyRouteException("This route is empty")
 
         return self.__departure.next == location or self.__tail == location
 
@@ -302,14 +324,14 @@ class Route(StructuredNode):
 
                     if last_inserted.next:
                         self.__total_duration = (
-                                self.__total_duration
-                                - last_inserted.duration(last_inserted.next)
-                                + self.__departure.duration(last_inserted.next)
+                            self.__total_duration
+                            - last_inserted.duration(last_inserted.next)
+                            + self.__departure.duration(last_inserted.next)
                         )
                         self.__total_distance = (
-                                self.__total_distance
-                                - last_inserted.distance(last_inserted.next)
-                                + self.__departure.distance(last_inserted.next)
+                            self.__total_distance
+                            - last_inserted.distance(last_inserted.next)
+                            + self.__departure.distance(last_inserted.next)
                         )
 
                         last_inserted.next.previous = last_inserted.previous
@@ -319,10 +341,10 @@ class Route(StructuredNode):
 
                     # Adjust route distance and duration
                     self.__total_duration = (
-                            self.__total_duration - self.previous.duration(last_inserted)
+                        self.__total_duration - self.previous.duration(last_inserted)
                     )
                     self.__total_distance = (
-                            self.__total_distance - self.previous.distance(last_inserted)
+                        self.__total_distance - self.previous.distance(last_inserted)
                     )
                 self.__total_quantity -= last_inserted.demand
                 self.__tail = last_inserted.previous
@@ -388,15 +410,17 @@ class Route(StructuredNode):
         else:
             driver = None
 
-        obj = json.dumps({
-            "id": self.id,
-            "created_on": self.__created_on.strftime(constant.DATETIME_FORMAT),
-            "total_quantity": self.__total_quantity,
-            "total_distance": self.__total_distance,
-            "total_duration": self.__total_duration,
-            "assigned_to": driver,
-            "itinerary": itinerary
-        })
+        obj = json.dumps(
+            {
+                "id": self.id,
+                "created_on": self.__created_on.strftime(constant.DATETIME_FORMAT),
+                "total_quantity": self.__total_quantity,
+                "total_distance": self.__total_distance,
+                "total_duration": self.__total_duration,
+                "assigned_to": driver,
+                "itinerary": itinerary,
+            }
+        )
         return obj
 
     def __len__(self):
@@ -404,10 +428,10 @@ class Route(StructuredNode):
 
     def __str__(self):
         location = self.__departure
-        path = ''
+        path = ""
         while location:
             if location.next:
-                path += str(location) + ' --> '
+                path += str(location) + " --> "
             else:
                 path += str(location)
             location = location.next

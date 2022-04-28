@@ -8,6 +8,5 @@ class RouteList(models.Model):
     message = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     others = ArrayField(
-        models.IntegerField(blank=True, null=True),
-        blank=True, null=True
+        models.IntegerField(blank=True, null=True), blank=True, null=True
     )

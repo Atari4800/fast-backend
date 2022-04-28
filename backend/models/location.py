@@ -9,7 +9,11 @@ class Location(models.Model):
     room_number = models.CharField(max_length=50, null=True, blank=True)
     zipcode = models.PositiveIntegerField()
     is_center = models.BooleanField(default=False)
-    latitude = models.DecimalField(max_digits=18, decimal_places=15, editable=False, blank=True, null=True)
-    longitude = models.DecimalField(max_digits=18, decimal_places=15, editable=False, blank=True, null=True)
+    latitude = models.DecimalField(
+        max_digits=18, decimal_places=15, editable=False, blank=True, null=True
+    )
+    longitude = models.DecimalField(
+        max_digits=18, decimal_places=15, editable=False, blank=True, null=True
+    )
     created_on = models.DateTimeField(auto_now_add=True, editable=False)
     modified_on = models.DateTimeField(auto_now=True, editable=False)

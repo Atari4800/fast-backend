@@ -3,8 +3,20 @@ import os
 import sys
 from datetime import datetime
 
-from neomodel import StructuredNode, StringProperty, IntegerProperty, BooleanProperty, FloatProperty, \
-    DateTimeProperty, UniqueIdProperty, Relationship, StructuredRel, One, DoesNotExist, AttemptedCardinalityViolation
+from neomodel import (
+    StructuredNode,
+    StringProperty,
+    IntegerProperty,
+    BooleanProperty,
+    FloatProperty,
+    DateTimeProperty,
+    UniqueIdProperty,
+    Relationship,
+    StructuredRel,
+    One,
+    DoesNotExist,
+    AttemptedCardinalityViolation,
+)
 
 if os.getcwd() not in sys.path:
     sys.path.insert(0, os.getcwd())
@@ -17,6 +29,7 @@ class _Weight(StructuredRel):
 
     An edge have distance and duration, and may have a savings.
     """
+
     distance = FloatProperty(required=True)
     duration = FloatProperty(required=True)
     savings = FloatProperty()
@@ -49,7 +62,7 @@ class Address(StructuredNode):
     zipcode = IntegerProperty(index=True, required=True)
 
     """A string representing the country of this address. If no value is provided it defaults to 'United States'."""
-    country = StringProperty(index=True, default='United States')
+    country = StringProperty(index=True, default="United States")
 
     """A float representing the latitude of this address. It is an optional property."""
     latitude = FloatProperty(index=True)
@@ -67,15 +80,15 @@ class Address(StructuredNode):
     external_id = IntegerProperty(required=False, unique_index=True)
 
     """A relationship to addresses that can be reached from this address."""
-    neighbor = Relationship(cls_name='Address', rel_type='CONNECTED_TO', model=_Weight)
+    neighbor = Relationship(cls_name="Address", rel_type="CONNECTED_TO", model=_Weight)
 
     def __init__(self, *args, **kwargs):
         """Creates an Address.
 
-            Typical usage example:
+        Typical usage example:
 
-            address = Address(address='6001 Dodge St', city='Omaha', state='NE', zipcode=68182)
-            address = Address(address='6001 Dodge St', city='Omaha', state='NE', zipcode=68182, country='US')
+        address = Address(address='6001 Dodge St', city='Omaha', state='NE', zipcode=68182)
+        address = Address(address='6001 Dodge St', city='Omaha', state='NE', zipcode=68182, country='US')
         """
         super(Address, self).__init__(*args, **kwargs)
 
@@ -93,8 +106,12 @@ class Address(StructuredNode):
             if self == other:
                 return 0.0
             self.__validate_edge_with(other)
-            return self.neighbor.relationship(other).distance if self.neighbor.relationship(other) else None
-        raise TypeError(f'{type(other)} is not supported.')
+            return (
+                self.neighbor.relationship(other).distance
+                if self.neighbor.relationship(other)
+                else None
+            )
+        raise TypeError(f"{type(other)} is not supported.")
 
     def duration(self, other):
         """Provides the mechanism for getting the duration between this address and another one.
@@ -110,11 +127,16 @@ class Address(StructuredNode):
             if self == other:
                 return 0.0
             self.__validate_edge_with(other)
-            return self.neighbor.relationship(other).duration if self.neighbor.relationship(other) else None
-        raise TypeError(f'{type(other)} is not supported.')
+            return (
+                self.neighbor.relationship(other).duration
+                if self.neighbor.relationship(other)
+                else None
+            )
+        raise TypeError(f"{type(other)} is not supported.")
 
     def __validate_edge_with(self, other):
         from routing.services import BingMatrixService
+
         if isinstance(other, type(self)):
             if self == other:
                 return True
@@ -124,7 +146,7 @@ class Address(StructuredNode):
                 else:
                     BingMatrixService.build_matrices(start=self, end=[other])
                 return True
-        raise TypeError(f'{type(other)} is not supported.')
+        raise TypeError(f"{type(other)} is not supported.")
 
     @classmethod
     def category(cls):
@@ -150,17 +172,16 @@ class Address(StructuredNode):
 
         @return: A JSON object representing this ADDRESS.
         """
-        obj = json.dumps({
-            'id': self.external_id,
-            'address': self.address,
-            'city': self.city,
-            'state': self.state,
-            'zipcode': self.zipcode,
-            'coordinates': {
-                'latitude': self.latitude,
-                'longitude': self.longitude
+        obj = json.dumps(
+            {
+                "id": self.external_id,
+                "address": self.address,
+                "city": self.city,
+                "state": self.state,
+                "zipcode": self.zipcode,
+                "coordinates": {"latitude": self.latitude, "longitude": self.longitude},
             }
-        })
+        )
         return obj
 
     def __hash__(self):
@@ -168,13 +189,18 @@ class Address(StructuredNode):
 
     def __eq__(self, other):
         if isinstance(other, type(self)):
-            return (self.address == other.address and self.city == other.city
-                    and self.state == other.state and self.zipcode == other.zipcode)
-        raise TypeError(f'{type(other)} not supported.')
+            return (
+                self.address == other.address
+                and self.city == other.city
+                and self.state == other.state
+                and self.zipcode == other.zipcode
+            )
+        raise TypeError(f"{type(other)} not supported.")
 
     def __str__(self):
-        return '{address}, {city}, {state} {zipcode}'.format(address=self.address, city=self.city, state=self.state,
-                                                             zipcode=self.zipcode)
+        return "{address}, {city}, {state} {zipcode}".format(
+            address=self.address, city=self.city, state=self.state, zipcode=self.zipcode
+        )
 
 
 class Location(StructuredNode):
@@ -182,6 +208,7 @@ class Location(StructuredNode):
 
     A Location is represented as a linked list node and encapsulation an Address node.
     """
+
     __abstract_node__ = True
 
     """A boolean to determine if this location is a depot. By default, a location is not a departure location."""
@@ -200,7 +227,9 @@ class Location(StructuredNode):
     modified_on = DateTimeProperty(index=True, default_now=True)
 
     """A relationship representing the physical address of this location."""
-    __geographic_location = Relationship(cls_name='Address', rel_type='LOCATED_AT', cardinality=One)
+    __geographic_location = Relationship(
+        cls_name="Address", rel_type="LOCATED_AT", cardinality=One
+    )
 
     def __init__(self, *args, **kwargs):
         super(Location, self).__init__(*args, **kwargs)
@@ -215,15 +244,25 @@ class Location(StructuredNode):
         and only one address.
         """
         if address is None:
-            raise TypeError(f'Type {type(address)} not supported. Supply type {type(Address)}.')
+            raise TypeError(
+                f"Type {type(address)} not supported. Supply type {type(Address)}."
+            )
 
         if address in Address.nodes.all():
-            node_set = Address.nodes.filter(address=address.address, city=address.city, state=address.state,
-                                            zipcode=address.zipcode)
+            node_set = Address.nodes.filter(
+                address=address.address,
+                city=address.city,
+                state=address.state,
+                zipcode=address.zipcode,
+            )
             address = node_set[0]
         else:
-            address = Address(address=address.address, city=address.city, state=address.state,
-                              zipcode=address.zipcode).save()
+            address = Address(
+                address=address.address,
+                city=address.city,
+                state=address.state,
+                zipcode=address.zipcode,
+            ).save()
         try:
             self.__geographic_location.connect(address)
         except AttemptedCardinalityViolation:
@@ -256,15 +295,15 @@ class Location(StructuredNode):
         """
         if issubclass(type(other), Location) and issubclass(type(self), Location):
             if self.address is None and other.address is None:
-                raise LocationStateException(f'{self} and {other} have no addresses.')
+                raise LocationStateException(f"{self} and {other} have no addresses.")
             elif self.address is None:
-                raise LocationStateException(f'{self} has no address.')
+                raise LocationStateException(f"{self} has no address.")
             elif other.address is None:
-                raise LocationStateException(f'{other} has no address.')
+                raise LocationStateException(f"{other} has no address.")
             if self == other:
                 return 0.0
             return self.address.duration(other.address)
-        raise TypeError(f'{type(other)} does not subclass {type(self)}.')
+        raise TypeError(f"{type(other)} does not subclass {type(self)}.")
 
     def distance(self, other):
         """Provides the mechanism to get the distance (in miles) between these two locations.
@@ -277,15 +316,15 @@ class Location(StructuredNode):
         """
         if issubclass(type(other), Location) and issubclass(type(self), Location):
             if self.address is None and other.address is None:
-                raise LocationStateException(f'{self} and {other} have no addresses.')
+                raise LocationStateException(f"{self} and {other} have no addresses.")
             elif self.address is None:
-                raise LocationStateException(f'{self} has no address.')
+                raise LocationStateException(f"{self} has no address.")
             elif other.address is None:
-                raise LocationStateException(f'{other} has no address.')
+                raise LocationStateException(f"{other} has no address.")
             if self == other:
                 return 0.0
             return self.address.distance(other.address)
-        raise TypeError(f'{type(other)} does not subclass {type(self)}.')
+        raise TypeError(f"{type(other)} does not subclass {type(self)}.")
 
     def serialize(self):
         """Serializes this location.
@@ -301,26 +340,31 @@ class Location(StructuredNode):
 
         @return: A JSON object representing this LOCATION.
         """
-        obj = json.dumps({
-            'id': self.external_id,
-            'is_center': self.is_center,
-            'address': json.loads(self.address.serialize())
-        })
+        obj = json.dumps(
+            {
+                "id": self.external_id,
+                "is_center": self.is_center,
+                "address": json.loads(self.address.serialize()),
+            }
+        )
         return obj
 
     def __str__(self):
-        return 'UID: {} at address {}'.format(self.uid, self.address)
+        return "UID: {} at address {}".format(self.uid, self.address)
 
     def __eq__(self, other):
         if issubclass(type(other), Location) and issubclass(type(self), Location):
             equal = False
             try:
                 if self.external_id and other.external_id:
-                    equal = self.external_id == other.external_id and self.is_center == other.is_center
+                    equal = (
+                        self.external_id == other.external_id
+                        and self.is_center == other.is_center
+                    )
             except AttributeError:
                 pass
             return equal
-        raise TypeError(f'{type(other)} and {type(self)} do not subclass {Location}.')
+        raise TypeError(f"{type(other)} and {type(self)} do not subclass {Location}.")
 
     def __hash__(self):
         return hash(self.address)
@@ -339,8 +383,11 @@ class Customer(Location):
 
         customer = Customer()
     """
+
     demand = IntegerProperty(index=True)
-    language = Relationship(cls_name='routing.models.language.Language', rel_type='SPEAKS')
+    language = Relationship(
+        cls_name="routing.models.language.Language", rel_type="SPEAKS"
+    )
 
     def __init__(self, *args, **kwargs):
         """Creates a Customer."""
@@ -379,16 +426,14 @@ class Customer(Location):
         else:
             languages = []
 
-        obj.update({
-            'demand': self.demand,
-            'languages': languages
-        })
+        obj.update({"demand": self.demand, "languages": languages})
         return json.dumps(obj)
 
 
 class Depot(Location):
     """A boolean to determine if this depot is considered as a departure location. By default, any depot is a
     departure location."""
+
     is_center = BooleanProperty(index=True, default=True)
 
     def __init__(self, *args, **kwargs):
@@ -420,6 +465,7 @@ class Pair:
         Typical usage example:
         pair = Pair(location1, location2)
     """
+
     def __init__(self, location1: Location, location2: Location):
         """Creates a Pair of locations based on the arguments.
 
@@ -498,7 +544,9 @@ class Pair:
         """
         if self.__location1 and self.__location2:
             return not (self.__location1.is_assigned or self.__location2.is_assigned)
-        elif (self.__location1 is None and self.__location2) or (self.__location1 and self.__location2 is None):
+        elif (self.__location1 is None and self.__location2) or (
+            self.__location1 and self.__location2 is None
+        ):
             return True
 
         return False
@@ -506,12 +554,12 @@ class Pair:
     def __eq__(self, other):
         if isinstance(other, type(self)):
             return self.__distance_saving == other.__distance_saving
-        raise ValueError(f'Type {type(other)} not supported.')
+        raise ValueError(f"Type {type(other)} not supported.")
 
     def __lt__(self, other):
         if isinstance(other, type(self)):
             return self.__distance_saving < other.__distance_saving
-        raise ValueError(f'Type {type(other)} not supported.')
+        raise ValueError(f"Type {type(other)} not supported.")
 
     def __str__(self):
-        return '({}, {})'.format(self.__location1, self.__location2)
+        return "({}, {})".format(self.__location1, self.__location2)

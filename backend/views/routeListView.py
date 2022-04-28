@@ -1,6 +1,4 @@
 from django.http import Http404
-from rest_framework import status
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,7 +7,6 @@ from backend.serializers import RouteListSerializer
 
 
 class RouteListView(APIView):
-
     def get_object(self, pk):
         try:
             return RouteList.objects.get(pk=pk)
@@ -23,7 +20,6 @@ class RouteListView(APIView):
 
 
 class RouteListAllView(APIView):
-
     def get(self, request, format=None):
         route_lists = RouteList.objects.all()
         serializer = RouteListSerializer(route_lists, many=True)

@@ -7,7 +7,6 @@ from django.http import Http404
 
 
 class DriverView(APIView):
-
     def get_object(self, pk):
         try:
             return Driver.objects.get(pk=pk)
@@ -34,7 +33,6 @@ class DriverView(APIView):
 
 
 class DriverListView(APIView):
-
     def get(self, request, format=None):
         drivers = Driver.objects.all()
         serializer = DriverSerializer(drivers, many=True)

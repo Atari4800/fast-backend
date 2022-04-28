@@ -6,9 +6,9 @@ from neomodel import StructuredNode, StringProperty, IntegerProperty
 class Language(StructuredNode):
     """This  class provides the basic mechanism for creating and working with a node representing world languages.
 
-        Typical usage example:
+    Typical usage example:
 
-        foo = Language(language='Armenian')
+    foo = Language(language='Armenian')
     """
 
     """An integer representing the id of this language. Each language is assigned a unique id."""
@@ -19,8 +19,7 @@ class Language(StructuredNode):
 
     @staticmethod
     def options() -> list:
-        """A utility function that returns a list of languages stored in the graph database.
-        """
+        """A utility function that returns a list of languages stored in the graph database."""
         stored_languages = []
         for language in Language.nodes.all():
             stored_languages.append(language.language)
@@ -38,7 +37,7 @@ class Language(StructuredNode):
         """
         if isinstance(other, type(self)):
             return str(self.language).lower() == str(other.language).lower()
-        raise TypeError(f'{type(other)} not supported.')
+        raise TypeError(f"{type(other)} not supported.")
 
     def __lt__(self, other):
         """Provides the mechanism for comparing two objects of type LANGUAGE.
@@ -51,7 +50,7 @@ class Language(StructuredNode):
         """
         if isinstance(other, type(self)):
             return str(self.language).lower() < str(other.language).lower()
-        raise TypeError(f'{type(other)} not supported.')
+        raise TypeError(f"{type(other)} not supported.")
 
     def __str__(self):
         """Returns a readable format for this language.
@@ -60,8 +59,8 @@ class Language(StructuredNode):
 
         @return: a String representing a readable format for this language.
         """
-        tokens = [token.capitalize() for token in str(self.language).split(' ')]
-        return '{}'.format(' '.join(tokens))
+        tokens = [token.capitalize() for token in str(self.language).split(" ")]
+        return "{}".format(" ".join(tokens))
 
     def serialize(self):
         """Serializes this language.
@@ -76,10 +75,7 @@ class Language(StructuredNode):
 
         @return: A JSON object representing this LANGUAGE.
         """
-        obj = json.dumps({
-            'id': self.external_id,
-            'language': str(self.language)
-        })
+        obj = json.dumps({"id": self.external_id, "language": str(self.language)})
         return obj
 
     @classmethod

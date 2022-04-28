@@ -7,7 +7,6 @@ from django.http import Http404
 
 
 class LocationView(APIView):
-
     def get_object(self, pk):
         try:
             return Location.objects.get(pk=pk)
@@ -34,7 +33,6 @@ class LocationView(APIView):
 
 
 class LocationListView(APIView):
-
     def get(self, request, format=None):
         locations = Location.objects.all()
         serializer = LocationSerializer(locations, many=True)

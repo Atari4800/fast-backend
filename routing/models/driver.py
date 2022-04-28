@@ -6,8 +6,15 @@ import os
 import sys
 from datetime import datetime
 
-from neomodel import StructuredNode, IntegerProperty, StringProperty, DateTimeProperty, UniqueIdProperty, \
-    RelationshipTo, AttemptedCardinalityViolation
+from neomodel import (
+    StructuredNode,
+    IntegerProperty,
+    StringProperty,
+    DateTimeProperty,
+    UniqueIdProperty,
+    RelationshipTo,
+    AttemptedCardinalityViolation,
+)
 
 if os.getcwd() not in sys.path:
     sys.path.insert(0, os.getcwd())
@@ -35,10 +42,14 @@ class Driver(StructuredNode):
 
         Two values are possible. 'P', which refers to 'PERMANENT' and 'V', which refers to 'VOLUNTEER'.
         """
-        EMPLOYEE = 'P'
-        VOLUNTEER = 'V'
 
-    __ROLES = {Role.EMPLOYEE.value: Role.EMPLOYEE.name, Role.VOLUNTEER.value: Role.VOLUNTEER.name}
+        EMPLOYEE = "P"
+        VOLUNTEER = "V"
+
+    __ROLES = {
+        Role.EMPLOYEE.value: Role.EMPLOYEE.name,
+        Role.VOLUNTEER.value: Role.VOLUNTEER.name,
+    }
 
     """A unique id assigned upon creating this object"""
     uid = UniqueIdProperty()
@@ -77,21 +88,23 @@ class Driver(StructuredNode):
     modified_on = DateTimeProperty(default_now=True)
 
     """A relationship to location this driver serves."""
-    serves = RelationshipTo('routing.models.location.Customer', 'SERVES')
+    serves = RelationshipTo("routing.models.location.Customer", "SERVES")
 
     """A relationship to the day when this driver is available."""
-    is_available_on = RelationshipTo('routing.models.availability.Availability', 'AVAILABLE_ON')
+    is_available_on = RelationshipTo(
+        "routing.models.availability.Availability", "AVAILABLE_ON"
+    )
 
     """A relationship to the language this drives speaks."""
-    language = RelationshipTo('routing.models.language.Language', 'SPEAKS')
+    language = RelationshipTo("routing.models.language.Language", "SPEAKS")
 
     def __init__(self, *args, **kwargs):
         """Creates a Driver and assigns it a Route. Its departure is set to None by default.
 
-            Typical usage example:
+        Typical usage example:
 
-            driver = Driver(external_id=1, first_name='John', last_name='Doe', capacity=35, employee_status='P')
-            driver = Driver(first_name='John', last_name='Doe', capacity=35, employee_status='V')
+        driver = Driver(external_id=1, first_name='John', last_name='Doe', capacity=35, employee_status='P')
+        driver = Driver(first_name='John', last_name='Doe', capacity=35, employee_status='V')
         """
         super(Driver, self).__init__(*args, **kwargs)
         self.__route = Route()
@@ -163,29 +176,43 @@ class Driver(StructuredNode):
                     return False
 
                 cumulative_duration_minutes = math.trunc(self.__route.total_duration)
-                cumulative_duration_seconds = self.__route.total_duration - cumulative_duration_minutes
-                cumulative_duration = cumulative_duration_minutes * 60 + cumulative_duration_seconds
-                if (cumulative_duration < (self.end_time - self.start_time).total_seconds()) \
-                        and (self.__route.total_demand < float(str(self.capacity))):
+                cumulative_duration_seconds = (
+                    self.__route.total_duration - cumulative_duration_minutes
+                )
+                cumulative_duration = (
+                    cumulative_duration_minutes * 60 + cumulative_duration_seconds
+                )
+                if (
+                    cumulative_duration
+                    < (self.end_time - self.start_time).total_seconds()
+                ) and (self.__route.total_demand < float(str(self.capacity))):
                     if self.max_delivery:
                         if len(self.__route) - 1 == self.max_delivery:
-                            logging.info(f'Volunteer reached delivery limit.')
+                            logging.info(f"Volunteer reached delivery limit.")
                             self.__route.close_route()
                             return False
                     else:
                         continue
-                elif cumulative_duration == (self.end_time - self.start_time).total_seconds():
-                    logging.info(f'Driver has met allocated time.')
+                elif (
+                    cumulative_duration
+                    == (self.end_time - self.start_time).total_seconds()
+                ):
+                    logging.info(f"Driver has met allocated time.")
                 elif self.__route.total_demand == self.capacity:
-                    logging.info(f'Driver is at capacity.')
-                elif cumulative_duration > (self.end_time - self.start_time).total_seconds():
-                    logging.info(f'Inserting this location lead to overtime. Undoing insertion.')
+                    logging.info(f"Driver is at capacity.")
+                elif (
+                    cumulative_duration
+                    > (self.end_time - self.start_time).total_seconds()
+                ):
+                    logging.info(
+                        f"Inserting this location lead to overtime. Undoing insertion."
+                    )
                     self.__route.undo()
-                    logging.info(f'Undid insertion of {location}')
+                    logging.info(f"Undid insertion of {location}")
                 elif self.__route.total_demand > int(str(self.capacity)):
-                    logging.info(f'Route is overcapacity.')
+                    logging.info(f"Route is overcapacity.")
                     self.__route.undo()
-                    logging.info(f'Undid insertion of {location}')
+                    logging.info(f"Undid insertion of {location}")
 
             return pair.first.is_assigned and pair.last.is_assigned
         return False
@@ -240,7 +267,9 @@ class Driver(StructuredNode):
         availabilities = self.get_availability()
         if availabilities:
             availabilities.sort()
-            availabilities = [json.loads(availability.serialize()) for availability in availabilities]
+            availabilities = [
+                json.loads(availability.serialize()) for availability in availabilities
+            ]
         else:
             availabilities = []
 
@@ -251,16 +280,18 @@ class Driver(StructuredNode):
         else:
             languages = []
 
-        obj = json.dumps({
-            'id': self.external_id,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'capacity': self.capacity,
-            'employee_status': self.employee_status,
-            'delivery_limit': self.max_delivery,
-            'availability': availabilities,
-            'languages': languages
-        })
+        obj = json.dumps(
+            {
+                "id": self.external_id,
+                "first_name": self.first_name,
+                "last_name": self.last_name,
+                "capacity": self.capacity,
+                "employee_status": self.employee_status,
+                "delivery_limit": self.max_delivery,
+                "availability": availabilities,
+                "languages": languages,
+            }
+        )
         return obj
 
     @classmethod
@@ -272,9 +303,13 @@ class Driver(StructuredNode):
 
     def __eq__(self, other):
         if isinstance(other, type(self)):
-            return (self.first_name == other.first_name and self.last_name == other.last_name
-                    and self.employee_status == other.employee_status and self.external_id == other.external_id)
-        raise TypeError(f'{type(other)} not supported.')
+            return (
+                self.first_name == other.first_name
+                and self.last_name == other.last_name
+                and self.employee_status == other.employee_status
+                and self.external_id == other.external_id
+            )
+        raise TypeError(f"{type(other)} not supported.")
 
     def __str__(self):
-        return '{},{}'.format(self.last_name, self.first_name)
+        return "{},{}".format(self.last_name, self.first_name)

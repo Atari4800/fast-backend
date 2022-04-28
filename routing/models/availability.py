@@ -22,10 +22,15 @@ class Availability(StructuredNode):
         foo = Availability(day='Monday')
     """
 
-    __DAYS = {constant.MONDAY_STR: constant.MONDAY_INT, constant.TUESDAY_STR: constant.TUESDAY_INT,
-              constant.WEDNESDAY_STR: constant.WEDNESDAY_INT, constant.THURSDAY_STR: constant.THURSDAY_INT,
-              constant.FRIDAY_STR: constant.FRIDAY_INT, constant.SATURDAY_STR: constant.SATURDAY_INT,
-              constant.SUNDAY_STR: constant.SUNDAY_INT}
+    __DAYS = {
+        constant.MONDAY_STR: constant.MONDAY_INT,
+        constant.TUESDAY_STR: constant.TUESDAY_INT,
+        constant.WEDNESDAY_STR: constant.WEDNESDAY_INT,
+        constant.THURSDAY_STR: constant.THURSDAY_INT,
+        constant.FRIDAY_STR: constant.FRIDAY_INT,
+        constant.SATURDAY_STR: constant.SATURDAY_INT,
+        constant.SUNDAY_STR: constant.SUNDAY_INT,
+    }
 
     """A string representing the day of the week. Each day is unique."""
     day = StringProperty(required=True, unique_index=True, choices=__DAYS)
@@ -52,7 +57,7 @@ class Availability(StructuredNode):
         """
         if isinstance(other, type(self)):
             return Availability.__DAYS[str(other)] == Availability.__DAYS[str(self)]
-        raise TypeError(f'{type(other)} not supported.')
+        raise TypeError(f"{type(other)} not supported.")
 
     def __lt__(self, other):
         """Provides the mechanism for comparing two objects of type AVAILABILITY.
@@ -66,7 +71,7 @@ class Availability(StructuredNode):
         """
         if isinstance(other, type(self)):
             return Availability.__DAYS[str(other)] < Availability.__DAYS[str(self)]
-        raise TypeError(f'{type(other)} not supported.')
+        raise TypeError(f"{type(other)} not supported.")
 
     def __str__(self):
         """Returns a readable format for this availability.
@@ -76,7 +81,7 @@ class Availability(StructuredNode):
 
         @return: a String representing a readable format for this availability.
         """
-        return '{}'.format(str(self.day).capitalize())
+        return "{}".format(str(self.day).capitalize())
 
     def serialize(self):
         """Serializes this availability.
@@ -91,10 +96,7 @@ class Availability(StructuredNode):
 
         @return: A JSON object representing this AVAILABILITY.
         """
-        obj = json.dumps({
-            'id': self.external_id,
-            'day': str(self.day)
-        })
+        obj = json.dumps({"id": self.external_id, "day": str(self.day)})
         return obj
 
     @classmethod

@@ -5,7 +5,6 @@ from rest_framework import status
 
 
 class BulkDriverView(APIView):
-
     def post(self, request, format=None):
         serializer = DriverSerializer(data=request.data, many=True)
         if serializer.is_valid():

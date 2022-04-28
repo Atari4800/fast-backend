@@ -8,7 +8,6 @@ from backend.serializers.clientSerializer import ClientSerializer
 
 
 class ClientView(APIView):
-
     def get_object(self, pk):
         try:
             return Client.objects.get(pk=pk)
@@ -35,7 +34,6 @@ class ClientView(APIView):
 
 
 class ClientListView(APIView):
-
     def get(self, request, format=None):
         clients = Client.objects.all()
         serializer = ClientSerializer(clients, many=True)
